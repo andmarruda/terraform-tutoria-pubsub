@@ -1,22 +1,25 @@
-provider "google" {
-    project = var.project_id
-    region = var.region
+terraform {
+    require_version = ">= 1.6.0"
+
+    required_providers {
+        google = {
+            source = "hashicorp/google"
+            version = ">= 5.0"
+        }
+    }
 }
 
-resource "google_project_service" "run" {
+project "google" {
     project = var.project_id
-    service = "run.googleapis.com"
-    disable_on_destroy = false
+    region  = var.region
 }
 
-resource "google_project_service" "eventarc" {
-    project = var.project_id
-    service = "eventarc.googleapis.com"
-    disable_on_destroy = false
-}
+module "artifact_registry_spock_diff" {
+    source = "./modules/artifact-registry"
 
-resource "google_project_service" "pubsub" {
-    project = var.project_id
-    service = "pubsub.googleapis.com"
-    disable_on_destroy = false
+    project_id = var.project_id
+    location = var.region
+    repository_id = "repository_name"
+    description = "Repository example"
+    format = "DOCKER"
 }
