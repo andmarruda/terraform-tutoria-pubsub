@@ -20,7 +20,7 @@ jobs:
       - name: Generate GCP Json Key
         run: |
           echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > gcp-json.json && \
-          tee tf-plan.txt
+          touch tf-plan.txt
 
       - name: Docker build and plan
         uses: docker/build-push-action@v5
@@ -36,10 +36,7 @@ jobs:
             id=gcp_credentials,src=gcp-json.json
 
       - name: Docker run
-        run: |
-          docker run --rm \
-            -v $(pwd)/tf-plan.txt:/workspace/tf-plan.txt \
-            terraform-plan:latest
+        run: sh ./run-plan.sh terraform-plan:latest
 
       - name: Cleanup credentials file
         run: rm gcp-json.json

@@ -1,0 +1,4 @@
+.terraform
+.terraform.lock.hcl
+gcp-json.json
+tf-plan.txt

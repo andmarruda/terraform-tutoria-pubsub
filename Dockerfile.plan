@@ -6,24 +6,27 @@ ARG REGION
 ENV TF_VAR_project_id=${PROJECT_ID}
 ENV TF_VAR_region=${REGION}
 
-RUN apk update && apk add --no-cache \
-    bash \
+RUN apk add --no-cache \
     curl \
-    gnupg \
     python3 \
-    py3-pip && \
-    curl -sSL https://sdk.cloud.google.com | bash && \
-    ~/google-cloud-sdk/install.sh --quiet && \
-    ln -s ~/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud
+    py3-pip \
+    ca-certificates
+
+RUN python3 -m venv /opt/venv
+
+ENV PATH="/opt/venv/bin:${PATH}"
+
+RUN pip install --upgrade \
+    google-cloud-storage \
+    google-api-python-client \
+    google-auth-httplib2 \
+    google-auth-oauthlib
 
 WORKDIR /workspace
 
 COPY . /workspace
 
-RUN --mount=type=secret,id=gcp_credentials,target=/workspace/gcp-json.json \
-    gcloud auth activate-service-account --key-file=/workspace/gcp-json.json && \
-    gcloud config set project ${PROJECT_ID} && \
-    terraform init
+RUN terraform init
 
 RUN terraform validate
 

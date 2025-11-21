@@ -14,7 +14,7 @@ provider "google" {
     region  = var.region
 }
 
-module "artifact_registry_spock_diff" {
+module "artifact_registry_app" {
     source = "./modules/artifact-registry"
 
     project_id = var.project_id
