@@ -24,4 +24,6 @@ RUN gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENT
 
 RUN terraform validate
 
-CMD ["terraform", "apply", "-auto-approve"]
+RUN terraform plan -out=tfplan
+
+CMD ["terraform", "plan"]
