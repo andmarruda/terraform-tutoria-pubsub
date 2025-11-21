@@ -1,0 +1,42 @@
+name: Terraform Plan - Open Issue
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  plan-and-open-issue:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create issue with plan
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const version = fs.readFileSync('VERSION', 'utf8').trim();
+            const plan = fs.readFileSync('tf-plan.txt', 'utf8') ?? 'No plan output available.';
+
+            const title = `Terraform Plan - Version ${version} ${new Date().toLocaleString()}`;
+            const body = [
+              `## Terraform Plan for Version ${version}`,
+              '```',
+              plan,
+              '```'
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['terraform', 'plan']
+            });
