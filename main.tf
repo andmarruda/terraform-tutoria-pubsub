@@ -1,5 +1,5 @@
 terraform {
-    require_version = ">= 1.6.0"
+    required_version = ">= 1.6.0"
 
     required_providers {
         google = {
@@ -9,7 +9,7 @@ terraform {
     }
 }
 
-project "google" {
+provider "google" {
     project = var.project_id
     region  = var.region
 }

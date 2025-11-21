@@ -17,6 +17,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Generate GCP Json Key
+        run: |
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > gcp-json.json && \
+          tee tf-plan.txt
+
+      - name: Docker build and plan
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.plan
+          tags: terraform-plan:latest
+          push: false
+          build-args: |
+            REGION=${{ secrets.REGION }}
+            PROJECT_ID=${{ secrets.PROJECT_ID }}
+          secrets: |
+            id=gcp_credentials,src=gcp-json.json
+
+      - name: Docker run
+        run: |
+          docker run --rm \
+            -v $(pwd)/tf-plan.txt:/workspace/tf-plan.txt \
+            terraform-plan:latest
+
+      - name: Cleanup credentials file
+        run: rm gcp-json.json
+
       - name: Create issue with plan
         uses: actions/github-script@v7
         with:
