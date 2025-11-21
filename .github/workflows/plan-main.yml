@@ -23,7 +23,14 @@ jobs:
           script: |
             const fs = require('fs');
             const version = fs.readFileSync('VERSION', 'utf8').trim();
-            const plan = fs.readFileSync('tf-plan.txt', 'utf8') ?? 'No plan output available.';
+
+            //verify if file tf-plan.txt exists
+            let plan = '';
+            if (!fs.existsSync('tf-plan.txt')) {
+              plan = 'No plan output available.';
+            } else {
+              plan = fs.readFileSync('tf-plan.txt', 'utf8') ?? 'No plan output available.';
+            }
 
             const title = `Terraform Plan - Version ${version} ${new Date().toLocaleString()}`;
             const body = [
