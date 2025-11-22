@@ -4,5 +4,5 @@ output "infrastructure_info" {
     location = module.artifact_registry_app.location
     link     = module.artifact_registry_app.repository_name
   }
-  description = "Info about Spock Diff Artifact Registry repository"
+  description = "Info about Artifact Registry repository"
 }
