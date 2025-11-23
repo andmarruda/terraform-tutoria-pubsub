@@ -14,6 +14,11 @@ provider "google" {
     region  = var.region
 }
 
+resource "google_project_service" "resource_manager_api" {
+    project = var.project_id
+    service = "cloudresourcemanager.googleapis.com"
+}
+
 module "artifact_registry_app" {
     source = "./modules/artifact-registry"
 
